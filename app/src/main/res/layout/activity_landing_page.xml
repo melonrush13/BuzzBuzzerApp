@@ -7,6 +7,39 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:theme="buzzTheme"
     tools:context="com.isaac.buzzbuzzerapp.LandingPage">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/title"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="131dp"
+        android:text="@string/title"
+        android:textSize="60dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/host"
+        android:id="@+id/hostButton"
+        android:layout_below="@+id/title"
+        android:layout_marginTop="120dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:textSize="30sp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/join"
+        android:id="@+id/joinButton"
+        android:layout_below="@+id/hostButton"
+        android:layout_marginTop="39dp"
+        android:layout_alignEnd="@+id/hostButton"
+        android:layout_alignParentStart="true"
+        android:textSize="30sp" />
 </RelativeLayout>

@@ -10,4 +10,6 @@
     <string name="feet">Feet</string>
     <string name="weight">Weight</string>
     <string name="createAccount">Create Account</string>
+    <string name="host">Host Party</string>
+    <string name="join">Join Party</string>
 </resources>
