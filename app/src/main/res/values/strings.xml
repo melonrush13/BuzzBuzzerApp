@@ -3,4 +3,11 @@
     <string name="initial_warning">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vestibulum aliquet feugiat. Quisque posuere ut dolor sed dapibus. Suspendisse potenti. Suspendisse feugiat, urna sed fermentum convallis, tortor felis maximus risus, eu viverra dui velit ac nulla. Pellentesque commodo velit et porttitor sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer euismod feugiat turpis, ac dictum felis porttitor ut. Nulla non nunc eget arcu pharetra rutrum. Curabitur rhoncus tempus velit id facilisis.</string>
     <string name="title">Buzz Buzzer</string>
     <string name="accept">Accept</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="name">Name</string>
+    <string name="inches">Inches</string>
+    <string name="feet">Feet</string>
+    <string name="weight">Weight</string>
+    <string name="createAccount">Create Account</string>
 </resources>

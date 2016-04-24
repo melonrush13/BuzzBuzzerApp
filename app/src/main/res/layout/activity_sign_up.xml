@@ -7,6 +7,83 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:theme="buzzTheme"
     tools:context=".SignUp">
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/name"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="54dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:hint="@string/name" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/heightFt"
+        android:layout_below="@+id/name"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="41dp"
+        android:layout_toStartOf="@+id/heightIn"
+        android:hint="@string/feet" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/heightIn"
+        android:layout_alignBottom="@+id/heightFt"
+        android:layout_alignParentEnd="true"
+        android:hint="@string/inches"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/weight"
+        android:hint="@string/weight"
+        android:layout_below="@+id/heightFt"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/male"
+        android:id="@+id/male"
+        android:layout_below="@+id/weight"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="45dp"
+        android:textSize="30sp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/female"
+        android:id="@+id/female"
+        android:layout_alignTop="@+id/male"
+        android:layout_alignParentEnd="true"
+        android:textSize="30sp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/createAccount"
+        android:id="@+id/createAccount"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="56dp"
+        android:layout_alignParentEnd="true"
+        android:singleLine="false"
+        android:textSize="30sp"
+        android:onClick="onPressCreateAccount" />
 </RelativeLayout>
