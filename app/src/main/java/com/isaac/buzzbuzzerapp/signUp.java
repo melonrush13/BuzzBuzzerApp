@@ -13,7 +13,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
-public class SignUp extends AppCompatActivity {
+public class signUp extends AppCompatActivity {
 
     EditText name;
     EditText feet;
