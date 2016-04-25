@@ -22,7 +22,7 @@ public class Warning extends AppCompatActivity {
                 startActivity(intent);
             }
             else{
-                Intent intent = new Intent(this, SignUp.class);
+                Intent intent = new Intent(this, signUp.class);
                 startActivity(intent);
             }
         }
@@ -31,7 +31,7 @@ public class Warning extends AppCompatActivity {
     public void onPress(View view){
         preferences.edit().putBoolean("acceptedTerms", true);
         preferences.edit().apply();
-        Intent intent = new Intent(this, SignUp.class);
+        Intent intent = new Intent(this, signUp.class);
         startActivity(intent);
     }
 
