@@ -32,7 +32,8 @@ public class signUp extends AppCompatActivity {
         feet = (EditText) findViewById(R.id.heightFt);
         inches = (EditText) findViewById(R.id.heightIn);
         weight = (EditText) findViewById(R.id.weight);
-        createAccount = (Button) findViewById(R.id.button);
+        createAccount = (Button) findViewById(R.id.createAccount);
+        createAccount.setEnabled(false);
         male = (CheckBox) findViewById(R.id.male);
         female = (CheckBox) findViewById(R.id.female);
         preference = getPreferences(Context.MODE_PRIVATE);
@@ -102,6 +103,7 @@ public class signUp extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableSubmitIfReady();
                 female.setChecked(false);
+                male.setChecked(true);
             }
         }
         );
@@ -111,6 +113,7 @@ public class signUp extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableSubmitIfReady();
                 male.setChecked(false);
+                female.setChecked(true);
             }
         }
         );
