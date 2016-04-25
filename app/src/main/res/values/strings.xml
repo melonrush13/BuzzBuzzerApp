@@ -12,4 +12,5 @@
     <string name="createAccount">Create Account</string>
     <string name="host">Host Party</string>
     <string name="join">Join Party</string>
+    <string name="vote">Vote</string>
 </resources>
