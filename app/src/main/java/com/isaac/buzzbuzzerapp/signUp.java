@@ -139,6 +139,10 @@ public class signUp extends AppCompatActivity {
 
     public void onPressCreateAccount(View view){
         String name = this.name.getText().toString();
+        while (name.contains(",")){
+            name.replace(","," ");
+        }
+        name = name.trim().substring(0,32);
         String in = this.inches.getText().toString();
         String ft = this.feet.getText().toString();
         String weight = this.weight.getText().toString();
