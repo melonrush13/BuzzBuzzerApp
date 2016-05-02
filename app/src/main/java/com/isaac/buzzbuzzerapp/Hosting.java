@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,11 +61,13 @@ public class Hosting extends AppCompatActivity implements
 
     /* Longitude of the location of last known location of the user*/
     String mLongitudeText;
-
+    TextView latitudeTextV;
+    TextView longitudeTextV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_hosting);
         // Create an instance of GoogleAPIClient needed for geofencing.
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -74,13 +77,30 @@ public class Hosting extends AppCompatActivity implements
                     .build();
         }
         mGeofenceList = new ArrayList<>();//initialize arraylist
+        latitudeTextV = (TextView) findViewById(R.id.latitudeTextV);
+        longitudeTextV = (TextView) findViewById(R.id.longitudeTextV);
+        if(mLatitudeText == null)
+            latitudeTextV.setText("latitude unavailable");
+        else
+            latitudeTextV.setText(mLatitudeText);
+        if(mLongitudeText == null)
+            longitudeTextV.setText("longitude unavailable");
+        else
+            longitudeTextV.setText(mLongitudeText);
+        /*longitudeTextV = (TextView)findViewById(R.id.longitude);
+        latitudeTextV = (TextView)findViewById(R.id.latitude);
+        */
+        /*if(mLongitudeText != null)
+            longitudeTextV.setText(mLongitudeText);
+        else
+            longitudeTextV.setText("Longitude unavailable");
 
-        TextView longitudeTextV = (TextView)findViewById(R.id.longitude);
-        TextView latitudeTextV = (TextView)findViewById(R.id.latitude);
-        longitudeTextV.setText(mLongitudeText);
-        latitudeTextV.setText(mLatitudeText);
-
-        setContentView(R.layout.activity_hosting);
+        if(mLongitudeText != null)
+            latitudeTextV.setText(mLatitudeText);
+        else
+            latitudeTextV.setText("Latitude unavailable");
+*/
+        //latitudeTextV.setText("hello");
 
     }
 
