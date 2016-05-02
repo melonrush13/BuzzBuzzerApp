@@ -103,7 +103,7 @@ public class signUp extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableSubmitIfReady();
                 female.setChecked(false);
-                male.setChecked(true);
+                male.setChecked(isChecked);
             }
         }
         );
@@ -113,7 +113,7 @@ public class signUp extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 enableSubmitIfReady();
                 male.setChecked(false);
-                female.setChecked(true);
+                female.setChecked(isChecked);
             }
         }
         );
@@ -142,7 +142,9 @@ public class signUp extends AppCompatActivity {
         while (name.contains(",")){
             name.replace(","," ");
         }
-        name = name.trim().substring(0,32);
+        name = name.trim();
+        if(name.length() > 32)
+            name = name.substring(0,32);
         String in = this.inches.getText().toString();
         String ft = this.feet.getText().toString();
         String weight = this.weight.getText().toString();
