@@ -1,10 +1,12 @@
 package com.isaac.buzzbuzzerapp;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -14,10 +16,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.*;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,6 +34,7 @@ import com.google.android.gms.location.GeofencingApi;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Hosting extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener {
@@ -40,14 +43,11 @@ public class Hosting extends AppCompatActivity implements
     /* Declares Google Play variable used for geofencing */
     GoogleApiClient mGoogleApiClient;
 
-    /* Not exactly sure what this is for */
-    static final int GEOFENCE_EXPIRATION_IN_MILLISECONDS = 10;
-
     /*for getting best results from your geofences is to set a minimum radius of 100 meters.
      *This helps account for the location accuracy of typical Wi-Fi networks,
      *and also helps reduce device power consumption.
      */
-    static final int GEOFENCE_RADIUS_IN_METERS = 100;
+    static final int GEOFENCE_RADIUS_IN_METERS = 1000;
 
     /* Declares geofencing object */
     protected ArrayList<Geofence> mGeofenceList;
@@ -74,8 +74,18 @@ public class Hosting extends AppCompatActivity implements
                     .build();
         }
         mGeofenceList = new ArrayList<>();//initialize arraylist
+
+        TextView longitudeTextV = (TextView)findViewById(R.id.longitude);
+        TextView latitudeTextV = (TextView)findViewById(R.id.latitude);
+        longitudeTextV.setText(mLongitudeText);
+        latitudeTextV.setText(mLatitudeText);
+
         setContentView(R.layout.activity_hosting);
+
     }
+
+
+
     @Override
     protected void onStart() {
         mGoogleApiClient.connect();
@@ -97,6 +107,7 @@ public class Hosting extends AppCompatActivity implements
         }
         Log.i(TAG, "Connected to GoogleApiClient");
     }
+
 
     @Override
     public void onConnectionSuspended(int cause) {
@@ -125,8 +136,36 @@ public class Hosting extends AppCompatActivity implements
         // Return a GeofencingRequest.
         return builder.build();
     }
+/*
+    public void  {
+        for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
 
+            mGeofenceList.add(new Geofence.Builder()
+                    // Set the request ID of the geofence. This is a string to identify this
+                    // geofence.
+                    .setRequestId(entry.getKey())
 
+                            // Set the circular region of this geofence.
+                    .setCircularRegion(
+                            entry.getValue().latitude,
+                            entry.getValue().longitude,
+                            GEOFENCE_RADIUS_IN_METERS
+                    )
+
+                            // Set the expiration duration of the geofence. This geofence gets automatically
+                            // removed after this period of time.
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+
+                            // Set the transition types of interest. Alerts are only generated for these
+                            // transition. We track entry and exit transitions in this sample.
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                            Geofence.GEOFENCE_TRANSITION_EXIT)
+
+                            // Create the geofence.
+                    .build());
+        }
+    }
+   */
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
