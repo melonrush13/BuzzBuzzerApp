@@ -26,7 +26,6 @@
         <activity android:name=".Party">
         </activity>
         <!-- GTIS service allows listening for geofence transitions-->
-        <service android:name="com.isaac.buzzbuzzerapp.GeofenceTransitionsIntentService"/>
     </application>
 
 </manifest>

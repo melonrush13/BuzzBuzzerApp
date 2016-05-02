@@ -30,8 +30,8 @@ public class Party extends AppCompatActivity {
         guestList = (ListView) findViewById(R.id.guestList);
 
         adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, guests);
-        guestList.setAdapter(adapter);
-        adapter.setNotifyOnChange(true);
+        //guestList.setAdapter(adapter);
+        //adapter.setNotifyOnChange(true);
 
 
     }
