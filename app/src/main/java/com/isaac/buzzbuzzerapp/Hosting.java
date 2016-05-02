@@ -1,58 +1,35 @@
 package com.isaac.buzzbuzzerapp;
 
-import android.app.PendingIntent;
+
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.GeofencingApi;
-import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
-import java.util.Map;
+import org.w3c.dom.Text;
 
-public class Hosting extends AppCompatActivity implements
-        ConnectionCallbacks, OnConnectionFailedListener {
+
+public class Hosting extends AppCompatActivity {
 
     protected static final String TAG = "Host Activity ";
-    /* Declares Google Play variable used for geofencing */
-    GoogleApiClient mGoogleApiClient;
-
-    /*for getting best results from your geofences is to set a minimum radius of 100 meters.
-     *This helps account for the location accuracy of typical Wi-Fi networks,
-     *and also helps reduce device power consumption.
-     */
-    static final int GEOFENCE_RADIUS_IN_METERS = 1000;
-
-    /* Declares geofencing object */
-    protected ArrayList<Geofence> mGeofenceList;
-
+    protected static final int GPS_MIN_DIST_IN_METERS = 1000;
+    protected static final int GPS_MIN_TIME_IN_MILLISEC = 5000;
+    LocationManager locationManager;
     /* Location of last known location of the user*/
     Location mLastLocation;
 
@@ -63,133 +40,79 @@ public class Hosting extends AppCompatActivity implements
     String mLongitudeText;
     TextView latitudeTextV;
     TextView longitudeTextV;
+    Button hostButton;
+    String provider = locationManager.GPS_PROVIDER;
+    LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hosting);
-        // Create an instance of GoogleAPIClient needed for geofencing.
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-        mGeofenceList = new ArrayList<>();//initialize arraylist
-        latitudeTextV = (TextView) findViewById(R.id.latitudeTextV);
+
+        //Layout stuff
         longitudeTextV = (TextView) findViewById(R.id.longitudeTextV);
-        if(mLatitudeText == null)
-            latitudeTextV.setText("latitude unavailable");
-        else
-            latitudeTextV.setText(mLatitudeText);
-        if(mLongitudeText == null)
-            longitudeTextV.setText("longitude unavailable");
-        else
-            longitudeTextV.setText(mLongitudeText);
-        /*longitudeTextV = (TextView)findViewById(R.id.longitude);
-        latitudeTextV = (TextView)findViewById(R.id.latitude);
-        */
-        /*if(mLongitudeText != null)
-            longitudeTextV.setText(mLongitudeText);
-        else
-            longitudeTextV.setText("Longitude unavailable");
+        latitudeTextV = (TextView) findViewById(R.id.latitudeTextV);
+        hostButton = (Button) findViewById(R.id.hostButton);
+        // Location stuff
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        //mLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        locationListener = new LocationListener() {
 
-        if(mLongitudeText != null)
-            latitudeTextV.setText(mLatitudeText);
-        else
-            latitudeTextV.setText("Latitude unavailable");
-*/
-        //latitudeTextV.setText("hello");
+            @Override
+            public void onLocationChanged(Location location) {
+                latitudeTextV.setText("" + location.getLatitude());
+                longitudeTextV.setText("" + location.getLongitude());
+            }
 
-    }
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                //no need to implement
+            }
 
+            @Override
+            public void onProviderEnabled(String provider) {
+                //no need to implement
+            }
 
-
-    @Override
-    protected void onStart() {
-        mGoogleApiClient.connect();
-        super.onStart();
-    }
-
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            mLatitudeText=(String.valueOf(mLastLocation.getLatitude()));
-            mLongitudeText=(String.valueOf(mLastLocation.getLongitude()));
+            @Override
+            public void onProviderDisabled(String provider) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        };
+        locationManager.requestLocationUpdates(provider, GPS_MIN_TIME_IN_MILLISEC, GPS_MIN_DIST_IN_METERS, locationListener);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.INTERNET}, 10);
+                return;
+            } else {
+                configureButton();
+            }
         }
-        Log.i(TAG, "Connected to GoogleApiClient");
-    }
+    }//end onCreate()
 
 
     @Override
-    public void onConnectionSuspended(int cause) {
-        // The connection to Google Play services was lost for some reason.
-        Log.i(TAG, "Connection suspended");
-
-        // onConnected() will be called again automatically when the service reconnects
-    }
-
-
-    /**
-     * Builds and returns a GeofencingRequest. Specifies the list of geofences to be monitored.
-     * Also specifies how the geofence notifications are initially triggered.
-     */
-    private GeofencingRequest getGeofencingRequest() {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-
-        // The INITIAL_TRIGGER_ENTER flag indicates that geofencing service should trigger a
-        // GEOFENCE_TRANSITION_ENTER notification when the geofence is added and if the device
-        // is already inside that geofence.
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL);
-
-        // Add the geofences to be monitored by geofencing service.
-        builder.addGeofences(mGeofenceList);
-
-        // Return a GeofencingRequest.
-        return builder.build();
-    }
-/*
-    public void  {
-        for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
-
-            mGeofenceList.add(new Geofence.Builder()
-                    // Set the request ID of the geofence. This is a string to identify this
-                    // geofence.
-                    .setRequestId(entry.getKey())
-
-                            // Set the circular region of this geofence.
-                    .setCircularRegion(
-                            entry.getValue().latitude,
-                            entry.getValue().longitude,
-                            GEOFENCE_RADIUS_IN_METERS
-                    )
-
-                            // Set the expiration duration of the geofence. This geofence gets automatically
-                            // removed after this period of time.
-                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
-
-                            // Set the transition types of interest. Alerts are only generated for these
-                            // transition. We track entry and exit transitions in this sample.
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                            Geofence.GEOFENCE_TRANSITION_EXIT)
-
-                            // Create the geofence.
-                    .build());
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 10:
+                if (grantResults.length > 0 && grantResults[0] == getPackageManager().PERMISSION_GRANTED)
+                    configureButton();
+                return;
         }
     }
-   */
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
-        // onConnectionFailed.
-        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+
+
+    public void configureButton() {
+        hostButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressWarnings("ResourceType")
+            public void onClick(View v) {
+
+                locationManager.requestLocationUpdates(provider, GPS_MIN_TIME_IN_MILLISEC, GPS_MIN_DIST_IN_METERS, locationListener);
+            }
+        });
     }
 }
