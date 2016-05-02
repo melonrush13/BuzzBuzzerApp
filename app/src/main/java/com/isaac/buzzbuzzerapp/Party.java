@@ -1,14 +1,13 @@
 package com.isaac.buzzbuzzerapp;
 
+import android.app.DownloadManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 public class Party extends AppCompatActivity {
@@ -33,6 +32,15 @@ public class Party extends AppCompatActivity {
         guestList.setAdapter(adapter);
         adapter.setNotifyOnChange(true);
 
+        RequestTask requestTask = new RequestTask();
+
+        new RequestTask(getApplicationContext(), new RequestTask.AsyncDataFetchResponse() {
+            @Override
+            public void processFinish(String output) {
+                //output should be the JSON string fetched from the endpoint.
+
+            }
+        }).execute("http://localhost:8080/guestList?PartyID=test");
 
     }
 
