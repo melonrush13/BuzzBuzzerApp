@@ -2,7 +2,6 @@ package com.isaac.buzzbuzzerapp;
 
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,10 +10,12 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import android.util.Log;
+
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,52 +23,62 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.w3c.dom.Text;
+/**
+ * Created by Alex K on 5/1/2016.
+ */
 
-
-public class Hosting extends AppCompatActivity {
+public class Hosting extends AppCompatActivity implements OnMapReadyCallback {
     /////////////////////////////////
     // Declare location variables //
     ///////////////////////////////
-    protected static final String TAG = "Host Activity ";
-    protected static final int GPS_MIN_DIST_IN_METERS = 5;
-    protected static final int GPS_MIN_TIME_IN_MILLISEC = 0;
+    protected static final int SECONDS_IN_mS = 1000;
+    protected static final int GPS_MIN_DIST_IN_METERS = 20;
+    protected static final int GPS_MIN_TIME_IN_MILLISEC = 10*SECONDS_IN_mS;
     LocationManager locationManager;
-    Location mLastLocation;
-    String mLatitudeText;
-    String mLongitudeText;
     String provider = locationManager.GPS_PROVIDER;
     LocationListener locationListener;
     boolean locationAvailable = false;
     ///////////////////////////////
     // Declare server variables //
     /////////////////////////////
+    protected static final int GPS_FAIL_LONG_LAT = 360;
     String partyName_toServer = null;
     boolean isPrivate_toServer = true;
     double latitude_toServer;
     double longitude_toServer;
-    protected static final int GPS_FAIL_LONG_LAT = 360;
+
     ///////////////////////////////
     // Declare layout variables //
     /////////////////////////////
-    TextView latitudeTextV;
-    TextView longitudeTextV;
-    Button hostButton;
-    RadioButton radioButtonPrivate,radioButtonPublic;
     EditText partyNameTextEdit;
+    Button hostButton;
+    RadioButton radioButtonPrivate, radioButtonPublic;
     TextView testDisplay;
     Toast toast;
 
+    ////////////////
+    // Map Stuff //
+    //////////////
+    private GoogleMap mMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hosting);
 
+        // Map Fragment
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(Hosting.this);
+
         //Layout stuff
-        longitudeTextV = (TextView) findViewById(R.id.longitudeTextV);
-        latitudeTextV = (TextView) findViewById(R.id.latitudeTextV);
         hostButton = (Button) findViewById(R.id.hostButton);
         radioButtonPrivate = (RadioButton) findViewById(R.id.RB_private);
         radioButtonPublic = (RadioButton) findViewById(R.id.RB_public);
@@ -76,27 +87,25 @@ public class Hosting extends AppCompatActivity {
 
         // Location stuff
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        //mLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         locationListener = new LocationListener() {
 
             @Override
             public void onLocationChanged(Location location) {
-                if(location != null) {
-                    if(location.getLatitude() == 0 || location.getLongitude() == 0) {
-                        toast = Toast.makeText(Hosting.this, "searching for gps", toast.LENGTH_SHORT);
+                if (location != null) {//
+                    if (location.getLatitude() <= 1 && location.getLatitude()>= -1 || location.getLongitude() <= 1 && location.getLongitude() >= -1) {
+                        toast = Toast.makeText(Hosting.this, "searching for gps, please hold tight", toast.LENGTH_SHORT);
                         toast.show();
-                    }
-                    else {
-                        /*latitudeTextV.setText("" + location.getLatitude());
-                        longitudeTextV.setText("" + location.getLongitude());*/
+                    } else {//
                         latitude_toServer = location.getLatitude();
                         longitude_toServer = location.getLongitude();
                         locationAvailable = true;
                         toast = Toast.makeText(Hosting.this, "GPS located successfully", toast.LENGTH_LONG);
                         toast.show();
+                        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude_toServer,longitude_toServer)).title("tits") );
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude_toServer,longitude_toServer),17.0f));
+
                     }
-                }
-                else {
+                } else { //location is invalid
                     latitude_toServer = GPS_FAIL_LONG_LAT; //360
                     longitude_toServer = GPS_FAIL_LONG_LAT;//360
                     toast = Toast.makeText(Hosting.this, "No location Available", toast.LENGTH_SHORT);
@@ -117,11 +126,12 @@ public class Hosting extends AppCompatActivity {
 
             @Override
             public void onProviderDisabled(String provider) {
+                toast = Toast.makeText(Hosting.this, "Please turn on your GPS", toast.LENGTH_SHORT);
+                toast.show();
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(intent);
             }
         };
-        //locationManager.requestLocationUpdates(provider, GPS_MIN_TIME_IN_MILLISEC, GPS_MIN_DIST_IN_METERS, locationListener);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{
@@ -148,17 +158,16 @@ public class Hosting extends AppCompatActivity {
 
     public void onRadioButtonClicked(View view) {
         boolean checked = ((RadioButton) view).isChecked(); // Is the button now checked?
-
         // Check which radio button was clicked
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.RB_private:
                 if (checked)
                     isPrivate_toServer = true;
-                    break;
+                break;
             case R.id.RB_public:
                 if (checked)
                     isPrivate_toServer = false;
-                    break;
+                break;
         }
     }//end onRadioButtonClicked()
 
@@ -167,7 +176,7 @@ public class Hosting extends AppCompatActivity {
 
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(Hosting.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Hosting.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
+                    // TODO: May need to implement security check if more problems with GPS occur
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
                     //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -177,42 +186,47 @@ public class Hosting extends AppCompatActivity {
                     return;
                 }
                 locationManager.requestLocationUpdates(provider, GPS_MIN_TIME_IN_MILLISEC, GPS_MIN_DIST_IN_METERS, locationListener);
-                /*mLastLocation = locationManager.getLastKnownLocation(provider);
-                if(mLastLocation != null) {
-
-                    latitude_toServer = mLastLocation.getLatitude();
-                    longitude_toServer = mLastLocation.getLongitude();
-                    latitudeTextV.setText("" + latitude_toServer);
-                    longitudeTextV.setText("" + longitude_toServer);
-                }
-                else {
-                    latitude_toServer = GPS_FAIL_LONG_LAT;
-                    longitude_toServer = GPS_FAIL_LONG_LAT;
-                    toast = Toast.makeText(Hosting.this, "No location Available (sucks)", toast.LENGTH_SHORT);
-                    toast.show();
-                }*/
 
                 testDisplay.setText(createServerMessage());
-                if(locationAvailable == true) {
+                if (locationAvailable == true && partyNameTextEdit.getText().toString().length() > 0) {
                     Intent intent = new Intent(Hosting.this, Party.class);
+                    toast = Toast.makeText(Hosting.this, "New party successfully made!", toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 5);
+                    toast.show();
+                    //TODO: Add code here to send information to server
+                    /*
+                    * make a function sendPartyInfoToServer()
+                    */
                     startActivity(intent);
-                }
-                else
-                {
-                    toast = Toast.makeText(Hosting.this, "GPS Not ready yet", toast.LENGTH_SHORT);
-                    toast.setMargin(40,40);
+                } else if (partyNameTextEdit.getText().toString().length() == 0) {
+                    toast = Toast.makeText(Hosting.this, "You forgot to enter a party name!", toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, -50);
+                    toast.show();
+                } else {
+                    toast = Toast.makeText(Hosting.this, "GPS location not ready yet; this may take a few seconds...", toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
                     toast.show();
                 }
             }// end onClick()
         });
     }//end configureButton()
-    private String createServerMessage(){
+
+    private String createServerMessage() {
         partyName_toServer = partyNameTextEdit.getText().toString();
         String boolMess;
-        if(isPrivate_toServer)
+        if (isPrivate_toServer)
             boolMess = "true";
         else
             boolMess = "false";
-        return "PartyName: "+partyName_toServer+"\nLat: " +latitude_toServer +"\nLong: " + longitude_toServer +"\nPrivate?: "+ boolMess;
+        return "PartyName: " + partyName_toServer + "\nLat: " + latitude_toServer + "\nLong: " + longitude_toServer + "\nPrivate?: " + boolMess;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        LatLng hostLoc = new LatLng(latitude_toServer,longitude_toServer);
+        mMap.addMarker(new MarkerOptions().position(hostLoc).title("PARTY AT MY HOUSE!"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(hostLoc));
     }
 }
