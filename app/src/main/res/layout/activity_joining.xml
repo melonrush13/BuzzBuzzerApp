@@ -12,9 +12,53 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="You made it to the joining page! Updates to come"
+        android:text="Select a party in your area:"
+        android:textSize="20dp"
         android:id="@+id/textView2"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <ListView
+        android:id="@+id/partyList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView2"
+        android:layout_above="@+id/orTextView"
+        android:smoothScrollbar="true"
+        android:padding="5dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button2"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="121dp" />
+        android:text="Join Party"
+        android:textSize="20dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/insertPartyNumber"
+        android:layout_above="@+id/button2"
+        android:layout_centerHorizontal="true"
+        android:inputType="textShortMessage"
+        android:hint="Enter Party Code"
+        android:textSize="20dp"
+        android:maxLines="1"
+        android:maxLength="4" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Or Enter 4 digit party code below"
+        android:id="@+id/orTextView"
+        android:layout_above="@+id/insertPartyNumber"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"/>
+
 </RelativeLayout>
