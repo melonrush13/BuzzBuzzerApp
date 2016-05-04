@@ -31,17 +31,18 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button2"
+        android:id="@+id/joinPartyButton"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="Join Party"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:onClick="onJoinPartyClick" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/insertPartyNumber"
-        android:layout_above="@+id/button2"
+        android:layout_above="@+id/joinPartyButton"
         android:layout_centerHorizontal="true"
         android:inputType="textShortMessage"
         android:hint="Enter Party Code"
